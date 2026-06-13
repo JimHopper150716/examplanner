@@ -357,15 +357,11 @@ header .sub { font-size: 0.58rem; color: var(--muted); letter-spacing: 0.12em; t
 
 const SLOTS = [
   // ── COMPUTER PROGRAMMING (Mod.1 & Mod.2 — treated as two modules) ──
-  // PDF lists "Computer Programming" as one entry; we map both modules to same date
+  
   { id:'cp-1a',  subjectId:'prog1', date:'2026-6-24', time:'09:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 1' },
   { id:'cp-1b',  subjectId:'prog1', date:'2026-7-22', time:'14:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 1' },
-  { id:'cp-2a',  subjectId:'prog2', date:'2026-6-24', time:'09:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 2' },
-  { id:'cp-2b',  subjectId:'prog2', date:'2026-7-22', time:'14:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 2' },
-
-  // ── ALGORITHMS & DATA STRUCTURES (listed separately in PDF — maps to prog modules)
-  { id:'ads-1a', subjectId:'prog1', date:'2026-7-2',  time:'09:00', room:'B1/B2', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 1' },
-  { id:'ads-1b', subjectId:'prog1', date:'2026-7-17', time:'14:00', room:'C2/C3', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 1' },
+  
+  // ── ALGORITHMS & DATA STRUCTURES,
   { id:'ads-2a', subjectId:'prog2', date:'2026-7-2',  time:'09:00', room:'B1/B2', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 2' },
   { id:'ads-2b', subjectId:'prog2', date:'2026-7-17', time:'14:00', room:'C2/C3', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 2' },
 
@@ -407,9 +403,12 @@ const SLOTS = [
    ══════════════════════════════════════════════════════════ */
 const SUBJECTS = [
   {
-    id:'prog', name:'Computer Programming, Algorithms & Data Structures',
-    cfu:12, type:'modular', taf:'BASIC',
-    modules:[ {id:'prog1',label:'Mod. 1'}, {id:'prog2',label:'Mod. 2'} ]
+    id: 'prog', name: 'Computer Programming, Algorithms & Data Structures',
+    cfu: 12, type: 'modular', taf: 'BASIC',
+    modules: [
+      { id: 'prog1', label: 'Mod. 1 — Computer Programming', cfu: 6 },
+      { id: 'prog2', label: 'Mod. 2 — Algorithms & Data Structures', cfu: 6 },
+    ]
   },
   {
     id:'krr',  name:'Knowledge Representation and Reasoning',
