@@ -4,22 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>L-AI Exam Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #080c10;
-  --surface:  #0d1117;
-  --line:     #1c2a38;
-  --line2:    #243040;
-  --blue:     #4a9eff;
-  --blue-dim: rgba(74,158,255,0.12);
-  --blue-mid: rgba(74,158,255,0.25);
-  --text:     #c8d8e8;
-  --muted:    #3d5266;
-  --muted2:   #567090;
-  --green:    #4a9eff;  /* reuse blue for "done" — 2-color only */
+  --bg:      #080c10;
+  --surf:    #0d1117;
+  --line:    #1c2a38;
+  --line2:   #243040;
+  --blue:    #4a9eff;
+  --bdim:    rgba(74,158,255,0.10);
+  --bmid:    rgba(74,158,255,0.22);
+  --text:    #c8d8e8;
+  --muted:   #3d5266;
+  --muted2:  #567090;
 }
 
 body {
@@ -27,136 +26,66 @@ body {
   color: var(--text);
   font-family: 'IBM Plex Mono', monospace;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48px 20px 80px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 44px 20px 80px;
   background-image:
-    linear-gradient(rgba(74,158,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(74,158,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(74,158,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,158,255,0.025) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
 /* ── HEADER ── */
 header {
-  width: 100%; max-width: 800px;
+  width: 100%; max-width: 820px;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 20px;
-  margin-bottom: 36px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
+  padding-bottom: 18px; margin-bottom: 32px;
+  display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px;
 }
-header h1 {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 300;
-  font-size: clamp(1rem, 3vw, 1.25rem);
-  color: var(--blue);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+header h1 { font-weight: 300; font-size: clamp(0.9rem,3vw,1.2rem); color: var(--blue); letter-spacing: 0.08em; text-transform: uppercase; }
 header h1 span { color: var(--muted2); }
-header .version {
-  font-size: 0.62rem;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+header .sub { font-size: 0.58rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ── CFU TRACKER ── */
 .tracker {
-  width: 100%; max-width: 800px;
+  width: 100%; max-width: 820px;
   border: 1px solid var(--line);
-  margin-bottom: 36px;
-  display: grid;
-  grid-template-columns: auto 1fr;
+  margin-bottom: 32px;
+  display: grid; grid-template-columns: 100px 1fr;
 }
-.tracker-left {
+.t-left {
   border-right: 1px solid var(--line);
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 110px;
+  padding: 18px 20px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-.tracker-num {
-  font-size: 2.8rem;
-  font-weight: 300;
-  line-height: 1;
-  color: var(--blue);
-  letter-spacing: -0.02em;
-  transition: opacity 0.3s;
-}
-.tracker-denom {
-  font-size: 0.62rem;
-  color: var(--muted2);
-  letter-spacing: 0.1em;
-  margin-top: 3px;
-}
-.tracker-right { padding: 16px 20px; }
-.tracker-label {
-  font-size: 0.58rem;
-  color: var(--muted);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.bar-track {
-  height: 2px;
-  background: var(--line);
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-}
-.bar-fill {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  background: var(--blue);
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
-}
-.subj-chips { display: flex; flex-direction: column; gap: 5px; }
+.t-num { font-size: 2.6rem; font-weight: 300; line-height: 1; color: var(--blue); letter-spacing:-0.02em; }
+.t-den { font-size: 0.58rem; color: var(--muted2); letter-spacing: 0.1em; margin-top: 3px; }
+.t-right { padding: 14px 18px; }
+.t-label { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+.bar-track { height: 2px; background: var(--line); margin-bottom: 14px; position: relative; overflow: hidden; }
+.bar-fill { position: absolute; left:0; top:0; bottom:0; background: var(--blue); transition: width 0.45s cubic-bezier(.4,0,.2,1); }
+.chips { display: flex; flex-direction: column; gap: 4px; }
 .chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.63rem;
-  color: var(--muted2);
-  padding: 3px 0;
-  border-bottom: 1px solid var(--line);
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 0.6rem; color: var(--muted2);
+  padding: 4px 0; border-bottom: 1px solid var(--line);
 }
 .chip:last-child { border-bottom: none; }
-.chip-indicator {
-  width: 16px; height: 2px;
-  background: var(--line2);
-  flex-shrink: 0;
-  transition: background 0.3s;
-}
-.chip.done .chip-indicator { background: var(--blue); }
+.chip-bar { width: 14px; height: 2px; background: var(--line2); flex-shrink: 0; margin-top: 5px; transition: background 0.3s; }
+.chip.done .chip-bar { background: var(--blue); }
+.chip.partial .chip-bar { background: repeating-linear-gradient(90deg,var(--blue) 0 3px,transparent 3px 6px); }
 .chip.done { color: var(--text); }
-.chip.partial .chip-indicator { background: repeating-linear-gradient(90deg, var(--blue) 0 4px, transparent 4px 8px); }
-.chip-cfu { margin-left: auto; color: var(--muted); font-size: 0.58rem; }
+.chip-body { flex: 1; line-height: 1.5; }
+.chip-warn { color: var(--muted); font-size: 0.53rem; display: block; font-style: italic; }
+.chip-cfu { margin-left: auto; color: var(--muted); font-size: 0.56rem; padding-top: 2px; white-space: nowrap; flex-shrink:0; }
 .chip.done .chip-cfu { color: var(--blue); }
-.chip-warn { font-size: 0.55rem; color: var(--muted); font-style: italic; }
 
 /* ── CONTROLS ── */
 .controls {
-  width: 100%; max-width: 800px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 0 0 12px;
-  border-bottom: 1px solid var(--line);
+  width: 100%; max-width: 820px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
 }
-.controls-month {
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text);
-  font-weight: 400;
-}
+.ctrl-month { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .ctrl-btns { display: flex; gap: 1px; }
 .nav-btn {
   background: transparent; border: 1px solid var(--line);
@@ -168,242 +97,219 @@ header .version {
 .nav-btn:first-child { border-right: none; }
 .nav-btn:hover { border-color: var(--blue); color: var(--blue); }
 
+/* ── LEGEND ROW ── */
+.legend-key {
+  width: 100%; max-width: 820px;
+  display: flex; gap: 20px; align-items: center;
+  margin-bottom: 10px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.lk-item { display: flex; align-items: center; gap: 6px; font-size: 0.55rem; color: var(--muted2); letter-spacing: 0.08em; text-transform: uppercase; }
+.lk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+.lk-cell-avail { width: 14px; height: 14px; border: 1px solid var(--line2); position: relative; }
+.lk-cell-avail::after { content:''; position:absolute; bottom:2px; right:2px; width:4px; height:4px; border-radius:50%; background:var(--blue); }
+.lk-cell-chosen { width: 14px; height: 14px; border: 1px solid var(--blue); background: var(--bdim); position: relative; }
+.lk-cell-chosen::after { content:''; position:absolute; bottom:2px; right:2px; width:4px; height:4px; border-radius:50%; background:var(--blue); }
+
 /* ── CALENDAR ── */
-.cal-wrap { width: 100%; max-width: 800px; }
+.cal-wrap { width: 100%; max-width: 820px; }
 .day-headers {
   display: grid; grid-template-columns: repeat(7,1fr);
-  border-left: 1px solid var(--line);
-  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line); border-top: 1px solid var(--line);
 }
 .day-headers span {
-  font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--muted); padding: 6px 0; text-align: center;
   border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
 }
-.cal-grid {
-  display: grid; grid-template-columns: repeat(7,1fr);
-  border-left: 1px solid var(--line);
-}
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); border-left: 1px solid var(--line); }
+
 .day-cell {
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  aspect-ratio: 1;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.15s;
-  overflow: visible;
+  aspect-ratio: 1; position: relative;
+  cursor: default; overflow: visible;
+  transition: background 0.12s;
+  min-height: 0;
 }
-.day-cell.empty { cursor: default; background: repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px); }
-.day-cell:not(.empty):hover { background: var(--blue-dim); }
-.day-cell.today { background: rgba(74,158,255,0.05); }
+.day-cell.empty {
+  cursor: default;
+  background: repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,0.008) 3px,rgba(255,255,255,0.008) 4px);
+}
+/* today marker */
+.day-cell.today { background: rgba(74,158,255,0.04); }
 .day-cell.today .day-num { color: var(--blue); }
+.day-cell.today::before,.day-cell.today::after { content:''; position:absolute; top:0; left:0; background:var(--blue); }
+.day-cell.today::before { width:6px; height:1px; }
+.day-cell.today::after  { width:1px; height:6px; }
 
-/* crosshair corner on today */
-.day-cell.today::before,
-.day-cell.today::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 6px; height: 1px;
-  background: var(--blue);
+/* clickable (has exam slot) */
+.day-cell.has-slot { cursor: pointer; }
+.day-cell.has-slot:hover { background: var(--bdim); }
+
+/* chosen state */
+.day-cell.chosen {
+  background: var(--bdim);
+  border-color: var(--blue);
+  border-width: 1px;
+  box-shadow: inset 0 0 0 1px var(--blue);
 }
-.day-cell.today::after { width: 1px; height: 6px; }
+.day-cell.chosen:hover { background: var(--bmid); }
 
 .day-num {
   position: absolute; top: 5px; left: 7px;
-  font-size: 0.6rem; color: var(--muted2); pointer-events: none; z-index: 1;
+  font-size: 0.58rem; color: var(--muted2); pointer-events: none; z-index: 1;
 }
-.day-fill {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  background: var(--blue-dim);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.day-cell.has-exam .day-fill { opacity: 1; }
-.day-cell.has-exam:hover .day-fill { opacity: 0; }
 
-/* tiny blue dot in corner when exam set */
-.day-dot {
-  position: absolute; bottom: 6px; right: 6px;
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: var(--blue);
-  pointer-events: none;
-  display: none;
+/* availability dot (exam scheduled per PDF) */
+.slot-dot {
+  position: absolute; bottom: 5px; right: 5px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue); pointer-events: none; display: none;
+  opacity: 0.5;
 }
-.day-cell.has-exam .day-dot { display: block; }
+.day-cell.has-slot .slot-dot { display: block; }
+.day-cell.chosen .slot-dot { opacity: 1; }
+
+/* chosen checkmark */
+.chosen-mark {
+  display: none; position: absolute; top: 4px; right: 6px;
+  font-size: 0.5rem; color: var(--blue); pointer-events: none;
+}
+.day-cell.chosen .chosen-mark { display: block; }
+
+/* multiple dots row for days with multiple slots */
+.multi-dots {
+  position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 3px; pointer-events: none;
+}
+.multi-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue); opacity: 0.45;
+  transition: opacity 0.15s;
+}
+.multi-dot.chosen { opacity: 1; }
 
 /* tooltip */
 .tooltip {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 8px); left: 50%;
-  transform: translateX(-50%);
-  background: var(--surface);
-  border: 1px solid var(--line2);
-  padding: 8px 12px;
-  white-space: nowrap;
-  font-size: 0.65rem;
-  color: var(--text);
-  pointer-events: none;
-  z-index: 200;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  min-width: 160px;
+  display: none; position: absolute;
+  bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
+  background: var(--surf); border: 1px solid var(--line2);
+  padding: 8px 12px; font-size: 0.62rem; color: var(--text);
+  pointer-events: none; z-index: 300; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5); min-width: 170px;
 }
 .tooltip::after {
-  content: '';
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-  border: 4px solid transparent; border-top-color: var(--line2);
+  content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:4px solid transparent; border-top-color:var(--line2);
 }
-.t-name { color: var(--blue); display: block; margin-bottom: 2px; font-size: 0.62rem; }
-.t-cfu  { color: var(--muted2); font-size: 0.58rem; }
 .day-cell:not(.empty):hover .tooltip { display: block; }
+.t-row { display: flex; flex-direction: column; gap: 4px; }
+.t-exam { color: var(--blue); font-size: 0.6rem; }
+.t-exam.chosen-exam { color: var(--text); }
+.t-meta { color: var(--muted2); font-size: 0.55rem; }
+.t-click { color: var(--muted); font-size: 0.53rem; font-style: italic; margin-top: 2px; }
+.t-divider { border: none; border-top: 1px solid var(--line); margin: 3px 0; }
 
-/* ── LEGEND ── */
-.legend {
-  width: 100%; max-width: 800px;
-  margin-top: 24px;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-.legend-label { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
-.legend-items { display: flex; flex-wrap: wrap; gap: 8px; }
-.legend-item {
-  font-size: 0.62rem; color: var(--muted2);
-  border: 1px solid var(--line);
-  padding: 3px 10px 3px 8px;
-  display: flex; align-items: center; gap: 7px;
-}
-.legend-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
-
-/* ── MODAL ── */
+/* ── MODAL (for confirm/deselect of multi-slot days) ── */
 .modal-bg {
   display: none; position: fixed; inset: 0;
-  background: rgba(4,8,12,0.8); z-index: 500;
+  background: rgba(4,8,12,0.82); z-index: 500;
   align-items: center; justify-content: center;
 }
 .modal-bg.open { display: flex; }
 .modal {
-  background: var(--surface);
-  border: 1px solid var(--line2);
-  width: min(480px, 96vw);
-  position: relative;
-  box-shadow: 0 0 0 1px rgba(74,158,255,0.08), 0 32px 64px rgba(0,0,0,0.7);
-  animation: mIn 0.18s ease;
+  background: var(--surf); border: 1px solid var(--line2);
+  width: min(420px, 96vw); position: relative;
+  box-shadow: 0 0 0 1px rgba(74,158,255,0.08), 0 24px 48px rgba(0,0,0,0.7);
+  animation: mIn 0.16s ease;
 }
-@keyframes mIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
+@keyframes mIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .modal-head {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
 }
-.modal-head h2 { font-size: 0.72rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
-.modal-date-label { font-size: 0.6rem; color: var(--muted2); }
-.modal-close {
-  background: none; border: none; color: var(--muted2); cursor: pointer;
-  font-size: 0.8rem; padding: 2px 6px; transition: color 0.15s;
-}
+.modal-head h2 { font-size: 0.68rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
+.modal-head .modal-date-txt { font-size: 0.58rem; color: var(--muted2); }
+.modal-close { background:none; border:none; color:var(--muted2); cursor:pointer; font-size:0.8rem; padding:2px 6px; }
 .modal-close:hover { color: var(--text); }
-
-.modal-body { padding: 16px 20px; }
-.field-label {
-  font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 8px; display: block;
-}
-.field-group { margin-bottom: 18px; }
-
-/* subject list */
-.subj-list {
-  display: flex; flex-direction: column;
-  max-height: 260px; overflow-y: auto; border: 1px solid var(--line);
-}
-.subj-list::-webkit-scrollbar { width: 3px; }
-.subj-list::-webkit-scrollbar-thumb { background: var(--line2); }
-
-.subj-btn {
+.modal-body { padding: 14px 18px; }
+.modal-section-label { font-size: 0.53rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.slot-list { display: flex; flex-direction: column; gap: 1px; margin-bottom: 14px; }
+.slot-row {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px;
-  border: none; border-bottom: 1px solid var(--line);
-  background: transparent; color: var(--muted2);
-  cursor: pointer; text-align: left; width: 100%;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  transition: background 0.12s, color 0.12s;
+  padding: 10px 14px; border: 1px solid var(--line);
+  background: transparent; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem; color: var(--muted2);
+  text-align: left; width: 100%;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
-.subj-btn:last-child { border-bottom: none; }
-.subj-btn:hover { background: var(--blue-dim); color: var(--text); }
-.subj-btn.sel { background: var(--blue-mid); color: var(--blue); }
-.subj-btn .sb-name { flex: 1; line-height: 1.4; }
-.subj-btn .sb-cfu { font-size: 0.6rem; color: var(--muted); white-space: nowrap; }
-.subj-btn.sel .sb-cfu { color: var(--blue); }
-.subj-btn .sb-warn { display: block; font-size: 0.55rem; color: var(--muted); font-style: italic; margin-top: 1px; }
-
-/* color row */
-.color-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.cswatch {
-  width: 22px; height: 22px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: border-color 0.15s, transform 0.1s;
-  position: relative;
-}
-.cswatch:hover { transform: scale(1.15); }
-.cswatch.sel { border-color: var(--text); }
-.cswatch.sel::after {
-  content: ''; position: absolute; inset: 0;
-  background: rgba(255,255,255,0.3);
-}
-
-.modal-foot {
-  padding: 12px 20px;
-  border-top: 1px solid var(--line);
-  display: flex; gap: 8px;
-}
-.mfbtn {
-  flex: 1; padding: 8px 12px;
-  border: 1px solid var(--line2);
-  background: transparent;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
-  cursor: pointer; color: var(--muted2);
+.slot-row:hover { background: var(--bdim); color: var(--text); }
+.slot-row.chosen-row { border-color: var(--blue); background: var(--bdim); color: var(--blue); }
+.slot-row .sr-check { width: 10px; height: 10px; border: 1px solid var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; }
+.slot-row.chosen-row .sr-check { border-color: var(--blue); color: var(--blue); }
+.slot-row .sr-name { flex: 1; line-height: 1.4; }
+.slot-row .sr-meta { font-size: 0.55rem; color: var(--muted); text-align: right; white-space: nowrap; }
+.slot-row.chosen-row .sr-meta { color: var(--blue); }
+.modal-foot { padding: 12px 18px; border-top: 1px solid var(--line); display: flex; gap: 8px; justify-content: flex-end; }
+.mbtn {
+  padding: 7px 16px; border: 1px solid var(--line2); background: transparent;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer; color: var(--muted2);
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
-.mfbtn:hover { border-color: var(--muted2); color: var(--text); }
-.mfbtn.primary { border-color: var(--blue); color: var(--blue); }
-.mfbtn.primary:hover { background: var(--blue-dim); }
-.mfbtn.danger:hover { border-color: #ff5050; color: #ff5050; background: rgba(255,80,80,0.06); }
-.mfbtn.small { flex: 0 0 auto; padding: 8px 14px; }
+.mbtn:hover { border-color: var(--muted2); color: var(--text); }
+.mbtn.primary { border-color: var(--blue); color: var(--blue); }
+.mbtn.primary:hover { background: var(--bdim); }
+
+/* ── BOTTOM LEGEND ── */
+.sched-legend { width: 100%; max-width: 820px; margin-top: 24px; border-top: 1px solid var(--line); padding-top: 14px; }
+.sl-label { font-size: 0.52rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+.sl-items { display: flex; flex-wrap: wrap; gap: 6px; }
+.sl-item {
+  font-size: 0.6rem; color: var(--muted2);
+  border: 1px solid var(--line); padding: 3px 10px;
+  display: flex; align-items: center; gap: 7px;
+}
+.sl-item.chosen-item { border-color: var(--blue); color: var(--blue); }
+.sl-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>L<span>–</span>AI <span>/</span> Exam Planner</h1>
-  <span class="version">Year 1 · 2025–26</span>
+  <span class="sub">Year 1 · Summer 2025–26</span>
 </header>
 
 <!-- CFU TRACKER -->
 <div class="tracker">
-  <div class="tracker-left">
-    <div class="tracker-num" id="cfuNum">0</div>
-    <div class="tracker-denom">/ 30 CFU</div>
+  <div class="t-left">
+    <div class="t-num" id="cfuNum">0</div>
+    <div class="t-den">/ 30 CFU</div>
   </div>
-  <div class="tracker-right">
-    <div class="tracker-label">Progress toward August goal</div>
+  <div class="t-right">
+    <div class="t-label">Progress toward August goal</div>
     <div class="bar-track"><div class="bar-fill" id="cfuBar" style="width:0%"></div></div>
-    <div class="subj-chips" id="cfuChips"></div>
+    <div class="chips" id="cfuChips"></div>
   </div>
 </div>
 
-<!-- NAV -->
+<!-- MONTH NAV -->
 <div class="controls">
-  <div class="controls-month" id="monthLabel"></div>
+  <div class="ctrl-month" id="monthLabel"></div>
   <div class="ctrl-btns">
     <button class="nav-btn" id="prevBtn">&#8592;</button>
     <button class="nav-btn" id="nextBtn">&#8594;</button>
   </div>
+</div>
+
+<!-- LEGEND KEY -->
+<div class="legend-key">
+  <div class="lk-item"><div class="lk-cell-avail"></div> Exam date available</div>
+  <div class="lk-item"><div class="lk-cell-chosen"></div> Chosen (attending)</div>
+  <div class="lk-item"><div class="lk-dot"></div> Dot = slot per PDF</div>
 </div>
 
 <!-- CALENDAR -->
@@ -415,10 +321,10 @@ header .version {
   <div class="cal-grid" id="calGrid"></div>
 </div>
 
-<!-- LEGEND -->
-<div class="legend">
-  <div class="legend-label">Scheduled this month</div>
-  <div class="legend-items" id="legendItems"></div>
+<!-- BOTTOM SCHEDULED LEGEND -->
+<div class="sched-legend">
+  <div class="sl-label">Chosen exams this month</div>
+  <div class="sl-items" id="slItems"></div>
 </div>
 
 <!-- MODAL -->
@@ -426,117 +332,158 @@ header .version {
   <div class="modal">
     <div class="modal-head">
       <div>
-        <h2>Assign Exam</h2>
-        <div class="modal-date-label" id="modalDateLabel"></div>
+        <h2 id="modalTitle">Exam slots</h2>
+        <div class="modal-date-txt" id="modalDateTxt"></div>
       </div>
       <button class="modal-close" id="closeBtn">&#10005;</button>
     </div>
     <div class="modal-body">
-      <div class="field-group">
-        <label class="field-label">Subject</label>
-        <div class="subj-list" id="subjList"></div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Colour tag</label>
-        <div class="color-row" id="colorRow"></div>
-      </div>
+      <div class="modal-section-label">Toggle to mark attendance</div>
+      <div class="slot-list" id="slotList"></div>
     </div>
     <div class="modal-foot">
-      <button class="mfbtn small" id="cancelBtn">Cancel</button>
-      <button class="mfbtn danger small" id="clearBtn">Clear</button>
-      <button class="mfbtn primary" id="saveBtn">Save</button>
+      <button class="mbtn" id="cancelBtn">Close</button>
+      <button class="mbtn primary" id="doneBtn">Done</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ── SUBJECTS ─────────────────────────────────────────────── */
-// All three 12-CFU subjects require 2 modules each (both must be
-// scheduled somewhere for the CFU to count).
+/* ══════════════════════════════════════════════════════════
+   EXAM SLOTS  — hardcoded from Summer 2025/26 PDF
+   Only Year 1 subjects shown.
+   Each slot: { id, subjectId, date:'YYYY-M-D', time, room, location, label }
+   ══════════════════════════════════════════════════════════ */
 
+const SLOTS = [
+  // ── COMPUTER PROGRAMMING (Mod.1 & Mod.2 — treated as two modules) ──
+  // PDF lists "Computer Programming" as one entry; we map both modules to same date
+  { id:'cp-1a',  subjectId:'prog1', date:'2026-6-24', time:'09:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 1' },
+  { id:'cp-1b',  subjectId:'prog1', date:'2026-7-22', time:'14:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 1' },
+  { id:'cp-2a',  subjectId:'prog2', date:'2026-6-24', time:'09:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 2' },
+  { id:'cp-2b',  subjectId:'prog2', date:'2026-7-22', time:'14:00', room:'E7',    loc:'Pavia',   label:'Computer Programming – Mod. 2' },
+
+  // ── ALGORITHMS & DATA STRUCTURES (listed separately in PDF — maps to prog modules)
+  { id:'ads-1a', subjectId:'prog1', date:'2026-7-2',  time:'09:00', room:'B1/B2', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 1' },
+  { id:'ads-1b', subjectId:'prog1', date:'2026-7-17', time:'14:00', room:'C2/C3', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 1' },
+  { id:'ads-2a', subjectId:'prog2', date:'2026-7-2',  time:'09:00', room:'B1/B2', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 2' },
+  { id:'ads-2b', subjectId:'prog2', date:'2026-7-17', time:'14:00', room:'C2/C3', loc:'Pavia',   label:'Algorithms & Data Structures – Mod. 2' },
+
+  // ── KNOWLEDGE REPRESENTATION AND REASONING ──
+  { id:'krr-1a', subjectId:'krr1', date:'2026-6-15', time:'09:00', room:'EF3',   loc:'Pavia',   label:'KRR – Part 1' },
+  { id:'krr-1b', subjectId:'krr1', date:'2026-7-1',  time:'09:00', room:'EF1',   loc:'Pavia',   label:'KRR – Part 1' },
+  { id:'krr-2a', subjectId:'krr2', date:'2026-6-15', time:'11:30', room:'EF3',   loc:'Pavia',   label:'KRR – Part 2' },
+  { id:'krr-2b', subjectId:'krr2', date:'2026-7-8',  time:'14:00', room:'EF3',   loc:'Pavia',   label:'KRR – Part 2' },
+
+  // ── CALCULUS ──
+  { id:'calc-1a',subjectId:'calc1', date:'2026-6-22', time:'09:00', room:'A1',    loc:'Pavia',   label:'Calculus – Part 1' },
+  { id:'calc-1b',subjectId:'calc1', date:'2026-7-15', time:'09:00', room:'aula5', loc:'Pavia',   label:'Calculus – Part 1' },
+  { id:'calc-2a',subjectId:'calc2', date:'2026-6-22', time:'11:30', room:'A1',    loc:'Pavia',   label:'Calculus – Part 2' },
+  { id:'calc-2b',subjectId:'calc2', date:'2026-7-15', time:'11:30', room:'aula5', loc:'Pavia',   label:'Calculus – Part 2' },
+
+  // ── THEORETICAL & COMPUTATIONAL LINEAR ALGEBRA ──
+  { id:'la-a',   subjectId:'linalg', date:'2026-6-25', time:'14:00', room:'A1',   loc:'Pavia',   label:'Linear Algebra' },
+  { id:'la-b',   subjectId:'linalg', date:'2026-7-9',  time:'09:00', room:'A4',   loc:'Pavia',   label:'Linear Algebra' },
+
+  // ── COMPUTATIONAL LOGIC ──
+  { id:'cl-a',   subjectId:'complog', date:'2026-6-16', time:'14:00', room:'B2',  loc:'Pavia',   label:'Computational Logic' },
+  { id:'cl-b',   subjectId:'complog', date:'2026-7-14', time:'14:00', room:'B2',  loc:'Pavia',   label:'Computational Logic' },
+
+  // ── EXPERIMENTAL PHYSICS FOR AI ──
+  { id:'ph-a',   subjectId:'physics', date:'2026-6-26', time:'10:00', room:'U2-07',loc:'Bicocca', label:'Experimental Physics for AI' },
+  { id:'ph-b',   subjectId:'physics', date:'2026-7-13', time:'10:00', room:'U2-07',loc:'Bicocca', label:'Experimental Physics for AI' },
+
+  // ── COGNITIVE PSYCHOLOGY — WRITTEN ──
+  { id:'cog-w-a',subjectId:'cogpsy_w', date:'2026-6-17', time:'09:00', room:'B1/B2',loc:'Pavia', label:'Cognitive Psychology – Written' },
+  { id:'cog-w-b',subjectId:'cogpsy_w', date:'2026-7-10', time:'14:00', room:'C2/C3',loc:'Pavia', label:'Cognitive Psychology – Written' },
+
+  // ── COGNITIVE PSYCHOLOGY — ORAL ──
+  { id:'cog-o-a',subjectId:'cogpsy_o', date:'2026-7-1',  time:'09:00', room:'E2',  loc:'Pavia',  label:'Cognitive Psychology – Oral' },
+  { id:'cog-o-b',subjectId:'cogpsy_o', date:'2026-7-17', time:'09:00', room:'E4',  loc:'Pavia',  label:'Cognitive Psychology – Oral' },
+];
+
+/* ══════════════════════════════════════════════════════════
+   SUBJECTS — Year 1 only
+   ══════════════════════════════════════════════════════════ */
 const SUBJECTS = [
   {
-    id: 'prog', name: 'Computer Programming, Algorithms & Data Structures',
-    cfu: 12, type: 'modular', taf: 'BASIC',
-    modules: [
-      { id: 'prog1', label: 'Mod. 1 — Programming & Algorithms', cfu: 6 },
-      { id: 'prog2', label: 'Mod. 2 — Data Structures',          cfu: 6 },
-    ]
+    id:'prog', name:'Computer Programming, Algorithms & Data Structures',
+    cfu:12, type:'modular', taf:'BASIC',
+    modules:[ {id:'prog1',label:'Mod. 1'}, {id:'prog2',label:'Mod. 2'} ]
   },
   {
-    id: 'krr', name: 'Knowledge Representation and Reasoning',
-    cfu: 12, type: 'modular', taf: 'BASIC / CORE',
-    modules: [
-      { id: 'krr1', label: 'Mod. 1', cfu: 6 },
-      { id: 'krr2', label: 'Mod. 2', cfu: 6 },
-    ]
+    id:'krr',  name:'Knowledge Representation and Reasoning',
+    cfu:12, type:'modular', taf:'BASIC / CORE',
+    modules:[ {id:'krr1',label:'Part 1'}, {id:'krr2',label:'Part 2'} ]
   },
   {
-    id: 'calc', name: 'Calculus',
-    cfu: 12, type: 'modular', taf: 'BASIC',
-    modules: [
-      { id: 'calc1', label: 'Mod. 1', cfu: 6 },
-      { id: 'calc2', label: 'Mod. 2', cfu: 6 },
-    ]
+    id:'calc', name:'Calculus',
+    cfu:12, type:'modular', taf:'BASIC',
+    modules:[ {id:'calc1',label:'Part 1'}, {id:'calc2',label:'Part 2'} ]
   },
-  { id: 'linalg',  name: 'Theoretical & Computational Linear Algebra', cfu: 6,  type: 'single', taf: 'CORE'        },
-  { id: 'complog', name: 'Computational Logic',                        cfu: 6,  type: 'single', taf: 'CORE'        },
-  { id: 'physics', name: 'Experimental Physics for AI',                cfu: 6,  type: 'single', taf: 'BASIC'       },
-  { id: 'cogpsy',  name: 'Cognitive Psychology',                       cfu: 6,  type: 'single', taf: 'INTEGRATIVE' },
+  { id:'linalg',  name:'Theoretical & Computational Linear Algebra', cfu:6,  type:'single', taf:'CORE'        },
+  { id:'complog', name:'Computational Logic',                        cfu:6,  type:'single', taf:'CORE'        },
+  { id:'physics', name:'Experimental Physics for AI',                cfu:6,  type:'single', taf:'BASIC'       },
+  {
+    id:'cogpsy', name:'Cognitive Psychology',
+    cfu:6, type:'modular', taf:'INTEGRATIVE',
+    modules:[ {id:'cogpsy_w',label:'Written'}, {id:'cogpsy_o',label:'Oral'} ]
+  },
 ];
 
-// Flat exam options
-const OPTIONS = [];
-SUBJECTS.forEach(s => {
-  if (s.type === 'single') {
-    OPTIONS.push({ id: s.id, parentId: s.id, label: s.name, sublabel: s.taf, cfu: s.cfu, modular: false });
-  } else {
-    s.modules.forEach(m => {
-      OPTIONS.push({ id: m.id, parentId: s.id, label: m.label, sublabel: s.name, cfu: m.cfu, modular: true });
-    });
-  }
-});
+/* ══════════════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════════════ */
+const NOW = new Date();
+let viewYear  = NOW.getFullYear();
+let viewMonth = NOW.getMonth();
 
-function optById(id) { return OPTIONS.find(o => o.id === id); }
-function subjById(id) { return SUBJECTS.find(s => s.id === id); }
+// chosen: Set of slot IDs user said they'll attend
+let chosen = new Set();
+try { chosen = new Set(JSON.parse(localStorage.getItem('laicald4_chosen') || '[]')); } catch(e){}
+function saveChosen() { try { localStorage.setItem('laicald4_chosen', JSON.stringify([...chosen])); } catch(e){} }
 
-/* ── COLORS ───────────────────────────────────────────────── */
-// Blueprint palette: blues + steel tones only (2-color spirit)
-const COLORS = [
-  '#ff5050', // Red (matches the clear/danger button)
-  '#4ade80'  // Green (bright enough for the dark theme)
-];
-
-/* ── STATE ─────────────────────────────────────────────────── */
-const now = new Date();
-let viewYear  = now.getFullYear();
-let viewMonth = now.getMonth();
-let selDay    = null;   // { year, month, day }
-let selExamId = null;
-let selColor  = COLORS[0];
-
-// storage: "YYYY-M-D" => { examId, color }
-let data = {};
-try { data = JSON.parse(localStorage.getItem('laicald3') || '{}'); } catch(e) {}
-function save() { try { localStorage.setItem('laicald3', JSON.stringify(data)); } catch(e) {} }
-function dayKey(y, m, d) { return `${y}-${m}-${d}`; }
+// modal state
+let modalDaySlots = [];   // slot objects for the open day
+let modalPending  = new Set(); // working copy during modal edit
 
 const MONTHS = ['January','February','March','April','May','June',
                 'July','August','September','October','November','December'];
 const DS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-/* ── CFU LOGIC ─────────────────────────────────────────────── */
+/* Build a date→slots map for fast lookup */
+function buildSlotMap() {
+  const map = {};
+  SLOTS.forEach(s => {
+    if (!map[s.date]) map[s.date] = [];
+    map[s.date].push(s);
+  });
+  return map;
+}
+const SLOT_MAP = buildSlotMap();
+
+function dateKey(y, m, d) { return `${y}-${m}-${d}`; }
+
+/* ══════════════════════════════════════════════════════════
+   CFU CALCULATION
+   ══════════════════════════════════════════════════════════ */
 function cfuState() {
-  const ids = new Set(Object.values(data).map(v => v.examId).filter(Boolean));
+  // which subjectIds have at least one chosen slot
+  const chosenSubjIds = new Set([...chosen].map(sid => {
+    const slot = SLOTS.find(s => s.id === sid);
+    return slot ? slot.subjectId : null;
+  }).filter(Boolean));
+
   let total = 0;
   const status = {};
+
   SUBJECTS.forEach(s => {
     if (s.type === 'single') {
-      const done = ids.has(s.id);
+      const done = chosenSubjIds.has(s.id);
       status[s.id] = done ? 'done' : 'none';
       if (done) total += s.cfu;
     } else {
-      const doneMods = s.modules.filter(m => ids.has(m.id));
+      const doneMods = s.modules.filter(m => chosenSubjIds.has(m.id));
       if (doneMods.length === s.modules.length) {
         status[s.id] = 'done'; total += s.cfu;
       } else if (doneMods.length > 0) {
@@ -560,67 +507,23 @@ function renderTracker() {
   SUBJECTS.forEach(s => {
     const st = status[s.id];
     const chip = document.createElement('div');
-    chip.className = 'chip' + (st === 'done' ? ' done' : st === 'partial' ? ' partial' : '');
+    chip.className = 'chip' + (st==='done'?' done': st==='partial'?' partial':'');
     let warn = '';
-    if (st === 'partial') warn = `<span class="chip-warn">⚠ schedule both modules for CFU to count</span>`;
-    chip.innerHTML = `<div class="chip-indicator"></div><span>${s.name}${warn}</span><span class="chip-cfu">${s.cfu} CFU</span>`;
+    if (st === 'partial') {
+      const missing = s.modules ? s.modules.filter(m => {
+        const chosenSubjIds = new Set([...chosen].map(id => { const sl=SLOTS.find(x=>x.id===id); return sl?sl.subjectId:null; }).filter(Boolean));
+        return !chosenSubjIds.has(m.id);
+      }).map(m=>m.label) : [];
+      warn = `<span class="chip-warn">⚠ still need: ${missing.join(', ')}</span>`;
+    }
+    chip.innerHTML = `<div class="chip-bar"></div><div class="chip-body">${s.name}${warn}</div><div class="chip-cfu">${s.cfu} CFU</div>`;
     chips.appendChild(chip);
   });
 }
 
-/* ── COLOR PICKER ─────────────────────────────────────────── */
-function buildColors() {
-  const row = document.getElementById('colorRow');
-  row.innerHTML = '';
-  COLORS.forEach(c => {
-    const sw = document.createElement('div');
-    sw.className = 'cswatch' + (c === selColor ? ' sel' : '');
-    sw.style.background = c;
-    sw.title = c;
-    sw.addEventListener('click', () => {
-      selColor = c;
-      document.querySelectorAll('.cswatch').forEach(x => x.classList.toggle('sel', x.title === c));
-    });
-    row.appendChild(sw);
-  });
-}
-
-/* ── SUBJECT LIST IN MODAL ─────────────────────────────────── */
-function buildSubjList() {
-  // scheduled ids excluding today's cell
-  const todayKey = selDay ? dayKey(selDay.year, selDay.month, selDay.day) : null;
-  const otherIds = new Set(
-    Object.entries(data)
-      .filter(([k]) => k !== todayKey)
-      .map(([,v]) => v.examId).filter(Boolean)
-  );
-
-  const list = document.getElementById('subjList');
-  list.innerHTML = '';
-
-  // Group: show parent header then modules
-  SUBJECTS.forEach(s => {
-    if (s.type === 'single') {
-      const btn = document.createElement('button');
-      btn.className = 'subj-btn' + (selExamId === s.id ? ' sel' : '');
-      btn.innerHTML = `<span class="sb-name">${s.name}<br><span style="font-size:0.55rem;color:var(--muted)">${s.taf}</span></span><span class="sb-cfu">${s.cfu} CFU</span>`;
-      btn.addEventListener('click', () => { selExamId = s.id; document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); });
-      list.appendChild(btn);
-    } else {
-      s.modules.forEach(m => {
-        const sibId = s.modules.find(x => x.id !== m.id)?.id;
-        const sibMissing = sibId && !otherIds.has(sibId);
-        const btn = document.createElement('button');
-        btn.className = 'subj-btn' + (selExamId === m.id ? ' sel' : '');
-        btn.innerHTML = `<span class="sb-name">${s.name}<br>${m.label}${sibMissing ? `<span class="sb-warn">both modules needed for ${s.cfu} CFU to count</span>` : ''}</span><span class="sb-cfu">${m.cfu} CFU</span>`;
-        btn.addEventListener('click', () => { selExamId = m.id; document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); });
-        list.appendChild(btn);
-      });
-    }
-  });
-}
-
-/* ── CALENDAR RENDER ───────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   CALENDAR RENDER
+   ══════════════════════════════════════════════════════════ */
 function render() {
   document.getElementById('monthLabel').textContent =
     `${MONTHS[viewMonth].toUpperCase()}  ${viewYear}`;
@@ -634,103 +537,135 @@ function render() {
   for (let i = 0; i < firstDay; i++) {
     const e = document.createElement('div'); e.className = 'day-cell empty'; grid.appendChild(e);
   }
+
   for (let d = 1; d <= days; d++) {
-    const k = dayKey(viewYear, viewMonth, d);
-    const entry = data[k];
-    const opt = entry ? optById(entry.examId) : null;
-    const isToday = d === now.getDate() && viewMonth === now.getMonth() && viewYear === now.getFullYear();
+    const dk = dateKey(viewYear, viewMonth + 1, d);
+    // Note: months in our slot keys are 1-based (matching PDF dates)
+    const slots = SLOT_MAP[dk] || [];
+    const isToday = d === NOW.getDate() && viewMonth === NOW.getMonth() && viewYear === NOW.getFullYear();
+    const hasSlot = slots.length > 0;
+    const someChosen = slots.some(s => chosen.has(s.id));
+    const allChosen  = hasSlot && slots.every(s => chosen.has(s.id));
 
     const cell = document.createElement('div');
-    cell.className = 'day-cell' + (isToday ? ' today' : '') + (entry ? ' has-exam' : '');
+    let cls = 'day-cell';
+    if (isToday) cls += ' today';
+    if (hasSlot) cls += ' has-slot';
+    if (someChosen) cls += ' chosen';
+    cell.className = cls;
 
+    // day number
     const num = document.createElement('span');
-    num.className = 'day-num'; num.textContent = d;
-    cell.appendChild(num);
+    num.className = 'day-num'; num.textContent = d; cell.appendChild(num);
 
-    const fill = document.createElement('div');
-    fill.className = 'day-fill';
-    if (entry) fill.style.background = entry.color + '22';
-    cell.appendChild(fill);
+    // chosen tick
+    const ck = document.createElement('span');
+    ck.className = 'chosen-mark'; ck.textContent = '✓'; cell.appendChild(ck);
 
-    // colored dot in corner
-    const dot = document.createElement('div');
-    dot.className = 'day-dot';
-    if (entry) dot.style.background = entry.color;
-    cell.appendChild(dot);
-
-    const tip = document.createElement('div');
-    tip.className = 'tooltip';
-    if (opt) {
-      tip.innerHTML = `<span class="t-name">${opt.label}</span><span class="t-cfu">${opt.cfu} CFU · ${opt.sublabel}</span>`;
+    // dots
+    if (slots.length <= 1) {
+      const dot = document.createElement('div'); dot.className = 'slot-dot'; cell.appendChild(dot);
     } else {
-      tip.innerHTML = `<span class="t-cfu">click to schedule</span>`;
+      const md = document.createElement('div'); md.className = 'multi-dots';
+      slots.forEach(s => {
+        const dt = document.createElement('div');
+        dt.className = 'multi-dot' + (chosen.has(s.id) ? ' chosen' : '');
+        md.appendChild(dt);
+      });
+      cell.appendChild(md);
+    }
+
+    // tooltip
+    const tip = document.createElement('div'); tip.className = 'tooltip';
+    if (hasSlot) {
+      const rows = slots.map(s => {
+        const isc = chosen.has(s.id);
+        return `<div class="t-exam${isc?' chosen-exam':''}">${isc?'✓ ':''}${s.label}</div>
+                <div class="t-meta">${s.time} · ${s.room} · ${s.loc}</div>`;
+      }).join('<hr class="t-divider">');
+      const action = someChosen ? 'click to edit' : 'click to mark attendance';
+      tip.innerHTML = `<div class="t-row">${rows}<div class="t-click">${action}</div></div>`;
+    } else {
+      tip.innerHTML = `<div class="t-click" style="color:var(--muted2)">no exam today</div>`;
     }
     cell.appendChild(tip);
 
-    cell.addEventListener('click', () => openModal(d));
+    if (hasSlot) cell.addEventListener('click', () => openModal(d, slots));
     grid.appendChild(cell);
   }
 
-  renderLegend();
+  renderBottomLegend();
   renderTracker();
 }
 
-function renderLegend() {
-  const cont = document.getElementById('legendItems');
+function renderBottomLegend() {
+  const cont = document.getElementById('slItems');
   cont.innerHTML = '';
-  const seen = {};
-  for (let d = 1; d <= 31; d++) {
-    const e = data[dayKey(viewYear, viewMonth, d)];
-    if (e && !seen[e.examId]) seen[e.examId] = e.color;
+  const seen = new Map(); // subjectId → first slot label
+  for (const sid of chosen) {
+    const slot = SLOTS.find(s => s.id === sid);
+    if (!slot) continue;
+    const dk = slot.date.split('-');
+    const slotMonth = parseInt(dk[1]) - 1; // 0-based
+    if (slotMonth !== viewMonth) continue;
+    if (!seen.has(slot.subjectId)) seen.set(slot.subjectId, slot.label);
   }
-  const ids = Object.keys(seen);
-  if (!ids.length) { cont.innerHTML = '<span style="color:var(--muted);font-size:0.62rem;font-style:italic">none this month</span>'; return; }
-  ids.forEach(id => {
-    const opt = optById(id);
+  if (!seen.size) {
+    cont.innerHTML = '<span style="color:var(--muted);font-size:0.6rem;font-style:italic">none chosen this month</span>'; return;
+  }
+  for (const [, label] of seen) {
     const item = document.createElement('div');
-    item.className = 'legend-item';
-    item.innerHTML = `<div class="legend-dot" style="background:${seen[id]}"></div>${opt ? opt.label : id}`;
+    item.className = 'sl-item chosen-item';
+    item.innerHTML = `<div class="sl-dot"></div>${label}`;
     cont.appendChild(item);
-  });
+  }
 }
 
-/* ── MODAL ─────────────────────────────────────────────────── */
-function openModal(day) {
-  selDay = { year: viewYear, month: viewMonth, day };
-  const k = dayKey(viewYear, viewMonth, day);
-  const entry = data[k];
-  selExamId = entry ? entry.examId : null;
-  selColor  = entry ? entry.color  : COLORS[0];
+/* ══════════════════════════════════════════════════════════
+   MODAL
+   ══════════════════════════════════════════════════════════ */
+function openModal(day, slots) {
+  modalDaySlots = slots;
+  modalPending  = new Set([...chosen].filter(id => slots.some(s => s.id === id)));
 
   const dateObj = new Date(viewYear, viewMonth, day);
-  document.getElementById('modalDateLabel').textContent =
-    `${DS[dateObj.getDay()]}, ${MONTHS[viewMonth]} ${day} ${viewYear}`;
+  document.getElementById('modalDateTxt').textContent =
+    `${DS[dateObj.getDay()]}, ${MONTHS[viewMonth]} ${day}, ${viewYear}`;
+  document.getElementById('modalTitle').textContent =
+    slots.length === 1 ? 'Exam Slot' : `${slots.length} Exam Slots`;
 
-  buildSubjList();
-  buildColors();
+  buildSlotList();
   document.getElementById('modalBg').classList.add('open');
+}
+
+function buildSlotList() {
+  const list = document.getElementById('slotList');
+  list.innerHTML = '';
+  modalDaySlots.forEach(s => {
+    const isc = modalPending.has(s.id);
+    const row = document.createElement('button');
+    row.className = 'slot-row' + (isc ? ' chosen-row' : '');
+    row.innerHTML = `
+      <div class="sr-check">${isc?'✓':''}</div>
+      <div class="sr-name">${s.label}<br><span style="font-size:0.53rem;color:var(--muted)">${s.time} · ${s.room} · ${s.loc}</span></div>
+      <div class="sr-meta">${isc?'attending':'—'}</div>`;
+    row.addEventListener('click', () => {
+      if (modalPending.has(s.id)) modalPending.delete(s.id);
+      else modalPending.add(s.id);
+      buildSlotList(); // re-render list
+    });
+    list.appendChild(row);
+  });
 }
 
 function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
 
-document.getElementById('saveBtn').addEventListener('click', () => {
-  if (!selExamId) {
-    const l = document.getElementById('subjList');
-    l.style.outline = '1px solid #ff5050';
-    setTimeout(() => l.style.outline = '', 700);
-    return;
-  }
-  const k = dayKey(selDay.year, selDay.month, selDay.day);
-  data[k] = { examId: selExamId, color: selColor };
-  save(); closeModal(); render();
+document.getElementById('doneBtn').addEventListener('click', () => {
+  // remove any old choices for this day's slots, then add pending
+  modalDaySlots.forEach(s => chosen.delete(s.id));
+  modalPending.forEach(id => chosen.add(id));
+  saveChosen(); closeModal(); render();
 });
-
-document.getElementById('clearBtn').addEventListener('click', () => {
-  if (!selDay) return;
-  delete data[dayKey(selDay.year, selDay.month, selDay.day)];
-  save(); closeModal(); render();
-});
-
 document.getElementById('cancelBtn').addEventListener('click', closeModal);
 document.getElementById('closeBtn').addEventListener('click', closeModal);
 document.getElementById('modalBg').addEventListener('click', e => {
@@ -744,6 +679,8 @@ document.getElementById('nextBtn').addEventListener('click', () => {
   viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } render();
 });
 
+// Start on June 2026 (where exams begin)
+viewYear = 2026; viewMonth = 5;
 render();
 </script>
 </body>
