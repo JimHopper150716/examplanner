@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L-AI Exam Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #080c10;
+  --surface:  #0d1117;
+  --line:     #1c2a38;
+  --line2:    #243040;
+  --blue:     #4a9eff;
+  --blue-dim: rgba(74,158,255,0.12);
+  --blue-mid: rgba(74,158,255,0.25);
+  --text:     #c8d8e8;
+  --muted:    #3d5266;
+  --muted2:   #567090;
+  --green:    #4a9eff;  /* reuse blue for "done" — 2-color only */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px 80px;
+  background-image:
+    linear-gradient(rgba(74,158,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,158,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── HEADER ── */
+header {
+  width: 100%; max-width: 800px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 20px;
+  margin-bottom: 36px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+header h1 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 300;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: var(--blue);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+header h1 span { color: var(--muted2); }
+header .version {
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── CFU TRACKER ── */
+.tracker {
+  width: 100%; max-width: 800px;
+  border: 1px solid var(--line);
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+.tracker-left {
+  border-right: 1px solid var(--line);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+}
+.tracker-num {
+  font-size: 2.8rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--blue);
+  letter-spacing: -0.02em;
+  transition: opacity 0.3s;
+}
+.tracker-denom {
+  font-size: 0.62rem;
+  color: var(--muted2);
+  letter-spacing: 0.1em;
+  margin-top: 3px;
+}
+.tracker-right { padding: 16px 20px; }
+.tracker-label {
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.bar-track {
+  height: 2px;
+  background: var(--line);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.bar-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--blue);
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.subj-chips { display: flex; flex-direction: column; gap: 5px; }
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.63rem;
+  color: var(--muted2);
+  padding: 3px 0;
+  border-bottom: 1px solid var(--line);
+}
+.chip:last-child { border-bottom: none; }
+.chip-indicator {
+  width: 16px; height: 2px;
+  background: var(--line2);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.chip.done .chip-indicator { background: var(--blue); }
+.chip.done { color: var(--text); }
+.chip.partial .chip-indicator { background: repeating-linear-gradient(90deg, var(--blue) 0 4px, transparent 4px 8px); }
+.chip-cfu { margin-left: auto; color: var(--muted); font-size: 0.58rem; }
+.chip.done .chip-cfu { color: var(--blue); }
+.chip-warn { font-size: 0.55rem; color: var(--muted); font-style: italic; }
+
+/* ── CONTROLS ── */
+.controls {
+  width: 100%; max-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+.controls-month {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  font-weight: 400;
+}
+.ctrl-btns { display: flex; gap: 1px; }
+.nav-btn {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--muted2); width: 28px; height: 28px;
+  cursor: pointer; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.nav-btn:first-child { border-right: none; }
+.nav-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ── CALENDAR ── */
+.cal-wrap { width: 100%; max-width: 800px; }
+.day-headers {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  border-left: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+}
+.day-headers span {
+  font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 0; text-align: center;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  border-left: 1px solid var(--line);
+}
+.day-cell {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  aspect-ratio: 1;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+  overflow: visible;
+}
+.day-cell.empty { cursor: default; background: repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px); }
+.day-cell:not(.empty):hover { background: var(--blue-dim); }
+.day-cell.today { background: rgba(74,158,255,0.05); }
+.day-cell.today .day-num { color: var(--blue); }
+
+/* crosshair corner on today */
+.day-cell.today::before,
+.day-cell.today::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 6px; height: 1px;
+  background: var(--blue);
+}
+.day-cell.today::after { width: 1px; height: 6px; }
+
+.day-num {
+  position: absolute; top: 5px; left: 7px;
+  font-size: 0.6rem; color: var(--muted2); pointer-events: none; z-index: 1;
+}
+.day-fill {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: var(--blue-dim);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.day-cell.has-exam .day-fill { opacity: 1; }
+.day-cell.has-exam:hover .day-fill { opacity: 0; }
+
+/* tiny blue dot in corner when exam set */
+.day-dot {
+  position: absolute; bottom: 6px; right: 6px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--blue);
+  pointer-events: none;
+  display: none;
+}
+.day-cell.has-exam .day-dot { display: block; }
+
+/* tooltip */
+.tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--line2);
+  padding: 8px 12px;
+  white-space: nowrap;
+  font-size: 0.65rem;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  min-width: 160px;
+}
+.tooltip::after {
+  content: '';
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent; border-top-color: var(--line2);
+}
+.t-name { color: var(--blue); display: block; margin-bottom: 2px; font-size: 0.62rem; }
+.t-cfu  { color: var(--muted2); font-size: 0.58rem; }
+.day-cell:not(.empty):hover .tooltip { display: block; }
+
+/* ── LEGEND ── */
+.legend {
+  width: 100%; max-width: 800px;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.legend-label { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+.legend-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.legend-item {
+  font-size: 0.62rem; color: var(--muted2);
+  border: 1px solid var(--line);
+  padding: 3px 10px 3px 8px;
+  display: flex; align-items: center; gap: 7px;
+}
+.legend-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+
+/* ── MODAL ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(4,8,12,0.8); z-index: 500;
+  align-items: center; justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--line2);
+  width: min(480px, 96vw);
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(74,158,255,0.08), 0 32px 64px rgba(0,0,0,0.7);
+  animation: mIn 0.18s ease;
+}
+@keyframes mIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.modal-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-head h2 { font-size: 0.72rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
+.modal-date-label { font-size: 0.6rem; color: var(--muted2); }
+.modal-close {
+  background: none; border: none; color: var(--muted2); cursor: pointer;
+  font-size: 0.8rem; padding: 2px 6px; transition: color 0.15s;
+}
+.modal-close:hover { color: var(--text); }
+
+.modal-body { padding: 16px 20px; }
+.field-label {
+  font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px; display: block;
+}
+.field-group { margin-bottom: 18px; }
+
+/* subject list */
+.subj-list {
+  display: flex; flex-direction: column;
+  max-height: 260px; overflow-y: auto; border: 1px solid var(--line);
+}
+.subj-list::-webkit-scrollbar { width: 3px; }
+.subj-list::-webkit-scrollbar-thumb { background: var(--line2); }
+
+.subj-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  border: none; border-bottom: 1px solid var(--line);
+  background: transparent; color: var(--muted2);
+  cursor: pointer; text-align: left; width: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  transition: background 0.12s, color 0.12s;
+}
+.subj-btn:last-child { border-bottom: none; }
+.subj-btn:hover { background: var(--blue-dim); color: var(--text); }
+.subj-btn.sel { background: var(--blue-mid); color: var(--blue); }
+.subj-btn .sb-name { flex: 1; line-height: 1.4; }
+.subj-btn .sb-cfu { font-size: 0.6rem; color: var(--muted); white-space: nowrap; }
+.subj-btn.sel .sb-cfu { color: var(--blue); }
+.subj-btn .sb-warn { display: block; font-size: 0.55rem; color: var(--muted); font-style: italic; margin-top: 1px; }
+
+/* color row */
+.color-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.cswatch {
+  width: 22px; height: 22px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+  position: relative;
+}
+.cswatch:hover { transform: scale(1.15); }
+.cswatch.sel { border-color: var(--text); }
+.cswatch.sel::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0.3);
+}
+
+.modal-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--line);
+  display: flex; gap: 8px;
+}
+.mfbtn {
+  flex: 1; padding: 8px 12px;
+  border: 1px solid var(--line2);
+  background: transparent;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; color: var(--muted2);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.mfbtn:hover { border-color: var(--muted2); color: var(--text); }
+.mfbtn.primary { border-color: var(--blue); color: var(--blue); }
+.mfbtn.primary:hover { background: var(--blue-dim); }
+.mfbtn.danger:hover { border-color: #ff5050; color: #ff5050; background: rgba(255,80,80,0.06); }
+.mfbtn.small { flex: 0 0 auto; padding: 8px 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>L<span>–</span>AI <span>/</span> Exam Planner</h1>
+  <span class="version">Year 1 · 2025–26</span>
+</header>
+
+<!-- CFU TRACKER -->
+<div class="tracker">
+  <div class="tracker-left">
+    <div class="tracker-num" id="cfuNum">0</div>
+    <div class="tracker-denom">/ 30 CFU</div>
+  </div>
+  <div class="tracker-right">
+    <div class="tracker-label">Progress toward August goal</div>
+    <div class="bar-track"><div class="bar-fill" id="cfuBar" style="width:0%"></div></div>
+    <div class="subj-chips" id="cfuChips"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="controls">
+  <div class="controls-month" id="monthLabel"></div>
+  <div class="ctrl-btns">
+    <button class="nav-btn" id="prevBtn">&#8592;</button>
+    <button class="nav-btn" id="nextBtn">&#8594;</button>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="cal-wrap">
+  <div class="day-headers">
+    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+    <span>Thu</span><span>Fri</span><span>Sat</span>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-label">Scheduled this month</div>
+  <div class="legend-items" id="legendItems"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>Assign Exam</h2>
+        <div class="modal-date-label" id="modalDateLabel"></div>
+      </div>
+      <button class="modal-close" id="closeBtn">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Subject</label>
+        <div class="subj-list" id="subjList"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Colour tag</label>
+        <div class="color-row" id="colorRow"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="mfbtn small" id="cancelBtn">Cancel</button>
+      <button class="mfbtn danger small" id="clearBtn">Clear</button>
+      <button class="mfbtn primary" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── SUBJECTS ─────────────────────────────────────────────── */
+// All three 12-CFU subjects require 2 modules each (both must be
+// scheduled somewhere for the CFU to count).
+
+const SUBJECTS = [
+  {
+    id: 'prog', name: 'Computer Programming, Algorithms & Data Structures',
+    cfu: 12, type: 'modular', taf: 'BASIC',
+    modules: [
+      { id: 'prog1', label: 'Mod. 1 — Programming & Algorithms', cfu: 6 },
+      { id: 'prog2', label: 'Mod. 2 — Data Structures',          cfu: 6 },
+    ]
+  },
+  {
+    id: 'krr', name: 'Knowledge Representation and Reasoning',
+    cfu: 12, type: 'modular', taf: 'BASIC / CORE',
+    modules: [
+      { id: 'krr1', label: 'Mod. 1', cfu: 6 },
+      { id: 'krr2', label: 'Mod. 2', cfu: 6 },
+    ]
+  },
+  {
+    id: 'calc', name: 'Calculus',
+    cfu: 12, type: 'modular', taf: 'BASIC',
+    modules: [
+      { id: 'calc1', label: 'Mod. 1', cfu: 6 },
+      { id: 'calc2', label: 'Mod. 2', cfu: 6 },
+    ]
+  },
+  { id: 'linalg',  name: 'Theoretical & Computational Linear Algebra', cfu: 6,  type: 'single', taf: 'CORE'        },
+  { id: 'complog', name: 'Computational Logic',                        cfu: 6,  type: 'single', taf: 'CORE'        },
+  { id: 'physics', name: 'Experimental Physics for AI',                cfu: 6,  type: 'single', taf: 'BASIC'       },
+  { id: 'cogpsy',  name: 'Cognitive Psychology',                       cfu: 6,  type: 'single', taf: 'INTEGRATIVE' },
+];
+
+// Flat exam options
+const OPTIONS = [];
+SUBJECTS.forEach(s => {
+  if (s.type === 'single') {
+    OPTIONS.push({ id: s.id, parentId: s.id, label: s.name, sublabel: s.taf, cfu: s.cfu, modular: false });
+  } else {
+    s.modules.forEach(m => {
+      OPTIONS.push({ id: m.id, parentId: s.id, label: m.label, sublabel: s.name, cfu: m.cfu, modular: true });
+    });
+  }
+});
+
+function optById(id) { return OPTIONS.find(o => o.id === id); }
+function subjById(id) { return SUBJECTS.find(s => s.id === id); }
+
+/* ── COLORS ───────────────────────────────────────────────── */
+// Blueprint palette: blues + steel tones only (2-color spirit)
+const COLORS = [
+  '#4a9eff','#1c6abf','#2196f3','#0d47a1',
+  '#29b6f6','#006994','#1565c0','#82b1ff',
+  '#40c4ff','#0277bd','#1a3a5c','#4dd0e1',
+];
+
+/* ── STATE ─────────────────────────────────────────────────── */
+const now = new Date();
+let viewYear  = now.getFullYear();
+let viewMonth = now.getMonth();
+let selDay    = null;   // { year, month, day }
+let selExamId = null;
+let selColor  = COLORS[0];
+
+// storage: "YYYY-M-D" => { examId, color }
+let data = {};
+try { data = JSON.parse(localStorage.getItem('laicald3') || '{}'); } catch(e) {}
+function save() { try { localStorage.setItem('laicald3', JSON.stringify(data)); } catch(e) {} }
+function dayKey(y, m, d) { return `${y}-${m}-${d}`; }
+
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+const DS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+/* ── CFU LOGIC ─────────────────────────────────────────────── */
+function cfuState() {
+  const ids = new Set(Object.values(data).map(v => v.examId).filter(Boolean));
+  let total = 0;
+  const status = {};
+  SUBJECTS.forEach(s => {
+    if (s.type === 'single') {
+      const done = ids.has(s.id);
+      status[s.id] = done ? 'done' : 'none';
+      if (done) total += s.cfu;
+    } else {
+      const doneMods = s.modules.filter(m => ids.has(m.id));
+      if (doneMods.length === s.modules.length) {
+        status[s.id] = 'done'; total += s.cfu;
+      } else if (doneMods.length > 0) {
+        status[s.id] = 'partial';
+      } else {
+        status[s.id] = 'none';
+      }
+    }
+  });
+  return { total, status };
+}
+
+function renderTracker() {
+  const { total, status } = cfuState();
+  document.getElementById('cfuNum').textContent = total;
+  const pct = Math.min(100, (total / 30) * 100);
+  document.getElementById('cfuBar').style.width = pct + '%';
+
+  const chips = document.getElementById('cfuChips');
+  chips.innerHTML = '';
+  SUBJECTS.forEach(s => {
+    const st = status[s.id];
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (st === 'done' ? ' done' : st === 'partial' ? ' partial' : '');
+    let warn = '';
+    if (st === 'partial') warn = `<span class="chip-warn">⚠ schedule both modules for CFU to count</span>`;
+    chip.innerHTML = `<div class="chip-indicator"></div><span>${s.name}${warn}</span><span class="chip-cfu">${s.cfu} CFU</span>`;
+    chips.appendChild(chip);
+  });
+}
+
+/* ── COLOR PICKER ─────────────────────────────────────────── */
+function buildColors() {
+  const row = document.getElementById('colorRow');
+  row.innerHTML = '';
+  COLORS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'cswatch' + (c === selColor ? ' sel' : '');
+    sw.style.background = c;
+    sw.title = c;
+    sw.addEventListener('click', () => {
+      selColor = c;
+      document.querySelectorAll('.cswatch').forEach(x => x.classList.toggle('sel', x.title === c));
+    });
+    row.appendChild(sw);
+  });
+}
+
+/* ── SUBJECT LIST IN MODAL ─────────────────────────────────── */
+function buildSubjList() {
+  // scheduled ids excluding today's cell
+  const todayKey = selDay ? dayKey(selDay.year, selDay.month, selDay.day) : null;
+  const otherIds = new Set(
+    Object.entries(data)
+      .filter(([k]) => k !== todayKey)
+      .map(([,v]) => v.examId).filter(Boolean)
+  );
+
+  const list = document.getElementById('subjList');
+  list.innerHTML = '';
+
+  // Group: show parent header then modules
+  SUBJECTS.forEach(s => {
+    if (s.type === 'single') {
+      const btn = document.createElement('button');
+      btn.className = 'subj-btn' + (selExamId === s.id ? ' sel' : '');
+      btn.innerHTML = `<span class="sb-name">${s.name}<br><span style="font-size:0.55rem;color:var(--muted)">${s.taf}</span></span><span class="sb-cfu">${s.cfu} CFU</span>`;
+      btn.addEventListener('click', () => { selExamId = s.id; document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); });
+      list.appendChild(btn);
+    } else {
+      s.modules.forEach(m => {
+        const sibId = s.modules.find(x => x.id !== m.id)?.id;
+        const sibMissing = sibId && !otherIds.has(sibId);
+        const btn = document.createElement('button');
+        btn.className = 'subj-btn' + (selExamId === m.id ? ' sel' : '');
+        btn.innerHTML = `<span class="sb-name">${s.name}<br>${m.label}${sibMissing ? `<span class="sb-warn">both modules needed for ${s.cfu} CFU to count</span>` : ''}</span><span class="sb-cfu">${m.cfu} CFU</span>`;
+        btn.addEventListener('click', () => { selExamId = m.id; document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); });
+        list.appendChild(btn);
+      });
+    }
+  });
+}
+
+/* ── CALENDAR RENDER ───────────────────────────────────────── */
+function render() {
+  document.getElementById('monthLabel').textContent =
+    `${MONTHS[viewMonth].toUpperCase()}  ${viewYear}`;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const days     = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const e = document.createElement('div'); e.className = 'day-cell empty'; grid.appendChild(e);
+  }
+  for (let d = 1; d <= days; d++) {
+    const k = dayKey(viewYear, viewMonth, d);
+    const entry = data[k];
+    const opt = entry ? optById(entry.examId) : null;
+    const isToday = d === now.getDate() && viewMonth === now.getMonth() && viewYear === now.getFullYear();
+
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (isToday ? ' today' : '') + (entry ? ' has-exam' : '');
+
+    const num = document.createElement('span');
+    num.className = 'day-num'; num.textContent = d;
+    cell.appendChild(num);
+
+    const fill = document.createElement('div');
+    fill.className = 'day-fill';
+    if (entry) fill.style.background = entry.color + '22';
+    cell.appendChild(fill);
+
+    // colored dot in corner
+    const dot = document.createElement('div');
+    dot.className = 'day-dot';
+    if (entry) dot.style.background = entry.color;
+    cell.appendChild(dot);
+
+    const tip = document.createElement('div');
+    tip.className = 'tooltip';
+    if (opt) {
+      tip.innerHTML = `<span class="t-name">${opt.label}</span><span class="t-cfu">${opt.cfu} CFU · ${opt.sublabel}</span>`;
+    } else {
+      tip.innerHTML = `<span class="t-cfu">click to schedule</span>`;
+    }
+    cell.appendChild(tip);
+
+    cell.addEventListener('click', () => openModal(d));
+    grid.appendChild(cell);
+  }
+
+  renderLegend();
+  renderTracker();
+}
+
+function renderLegend() {
+  const cont = document.getElementById('legendItems');
+  cont.innerHTML = '';
+  const seen = {};
+  for (let d = 1; d <= 31; d++) {
+    const e = data[dayKey(viewYear, viewMonth, d)];
+    if (e && !seen[e.examId]) seen[e.examId] = e.color;
+  }
+  const ids = Object.keys(seen);
+  if (!ids.length) { cont.innerHTML = '<span style="color:var(--muted);font-size:0.62rem;font-style:italic">none this month</span>'; return; }
+  ids.forEach(id => {
+    const opt = optById(id);
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${seen[id]}"></div>${opt ? opt.label : id}`;
+    cont.appendChild(item);
+  });
+}
+
+/* ── MODAL ─────────────────────────────────────────────────── */
+function openModal(day) {
+  selDay = { year: viewYear, month: viewMonth, day };
+  const k = dayKey(viewYear, viewMonth, day);
+  const entry = data[k];
+  selExamId = entry ? entry.examId : null;
+  selColor  = entry ? entry.color  : COLORS[0];
+
+  const dateObj = new Date(viewYear, viewMonth, day);
+  document.getElementById('modalDateLabel').textContent =
+    `${DS[dateObj.getDay()]}, ${MONTHS[viewMonth]} ${day} ${viewYear}`;
+
+  buildSubjList();
+  buildColors();
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+  if (!selExamId) {
+    const l = document.getElementById('subjList');
+    l.style.outline = '1px solid #ff5050';
+    setTimeout(() => l.style.outline = '', 700);
+    return;
+  }
+  const k = dayKey(selDay.year, selDay.month, selDay.day);
+  data[k] = { examId: selExamId, color: selColor };
+  save(); closeModal(); render();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!selDay) return;
+  delete data[dayKey(selDay.year, selDay.month, selDay.day)];
+  save(); closeModal(); render();
+});
+
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('closeBtn').addEventListener('click', closeModal);
+document.getElementById('modalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+});
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } render();
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } render();
+});
+
+render();
+</script>
+</body>
+</html>
